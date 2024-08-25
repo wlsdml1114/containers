@@ -11,4 +11,4 @@ cd /workspace/ComfyUI
 python main.py --listen --port 3000 &
 
 cd /workspace/LivePortrait/
-python app.py --server-name "0.0.0.0" --server-port 3001 &
+python app.py --server-name "0.0.0.0" --server-port 8890 &
