@@ -4,7 +4,7 @@ variable "RELEASE" {
 
 target "default" {
     dockerfile = "Dockerfile"
-    tags = ["wlsdml1114/engui_liveportrait:${RELEASE}"]
+    tags = ["wlsdml1114/engui_mimicmotion:${RELEASE}"]
     contexts = {
         scripts = "../../container-template"
         proxy = "../../container-template/proxy"

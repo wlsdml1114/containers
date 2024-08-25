@@ -49,46 +49,60 @@ RUN jupyter contrib nbextension install --user && \
 # Install ComfyUI and ComfyUI Manager
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd /ComfyUI && \
-    pip install -r requirements.txt && \
-    git clone https://github.com/ltdrdata/ComfyUI-Manager.git custom_nodes/ComfyUI-Manager && \
+    pip install -r requirements.txt
+RUN git clone https://github.com/ltdrdata/ComfyUI-Manager.git custom_nodes/ComfyUI-Manager && \
     cd custom_nodes/ComfyUI-Manager && \
-    pip install -r requirements.txt && \
-    cd ../ && \
-    git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
+    git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/kijai/ComfyUI-LivePortraitKJ.git && \
     cd ComfyUI-LivePortraitKJ && \
     pip install insightface && \
-    pip install -r requirements.txt && \
-    cd ../ && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait.git && \
     cd ComfyUI-AdvancedLivePortrait && \
-    pip install -r requirements.txt && \
-    cd ../ && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git && \
     cd ComfyUI-VideoHelperSuite && \
-    pip install -r requirements.txt && \
-    cd ../ && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/cubiq/ComfyUI_essentials.git && \
     cd ComfyUI_essentials && \
-    pip install -r requirements.txt && \
-    cd ../ && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/kijai/ComfyUI-KJNodes.git && \
     cd ComfyUI-KJNodes && \
-    pip install -r requirements.txt && \
-    cd ../../ && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
+    git clone https://github.com/kijai/ComfyUI-MimicMotionWrapper.git && \
+    cd ComfyUI-MimicMotionWrapper && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/models && \
+    mkdir mimicmotion && \
+    cd mimicmotion && \
+    wget https://huggingface.co/Kijai/MimicMotion_pruned/resolve/main/MimicMotionMergedUnet_1-0-fp16.safetensors -O MimicMotionMergedUnet_1-0-fp16.safetensors
+# RUN pip install -U "huggingface_hub[cli]" && \
+#     huggingface-cli login --token $HUGGINGFACE_TOKEN
+# RUN cd ../diffusers && \
+#     wget https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt-1-1/resolve/main/svd_xt_1_1.safetensors -O svd_xt_1_1.safetensors
+RUN cd /ComfyUI/ && \
     mkdir pysssss-workflows && \
+    cp custom_nodes/ComfyUI-MimicMotionWrapper/examples/*.json pysssss-workflows/ && \
     cp custom_nodes/ComfyUI-LivePortraitKJ/examples/*.json pysssss-workflows/ && \
     cp custom_nodes/ComfyUI-AdvancedLivePortrait/sample/workflows/*.json pysssss-workflows/
 
 
 
-    # Install LP
-RUN cd / && \
-git clone https://github.com/KwaiVGI/LivePortrait.git && \
-cd LivePortrait && \
-pip install -r requirements.txt && \
-pip install -U "huggingface_hub[cli]" && \
-huggingface-cli download KwaiVGI/LivePortrait --local-dir pretrained_weights --exclude "*.git*" "README.md" "docs"
+# Install LP
+# RUN cd / && \
+# git clone https://github.com/KwaiVGI/LivePortrait.git && \
+# cd LivePortrait && \
+# pip install -r requirements.txt && \
+# pip install -U "huggingface_hub[cli]" && \
+# huggingface-cli download KwaiVGI/LivePortrait --local-dir pretrained_weights --exclude "*.git*" "README.md" "docs"
 
 
 # Create necessary directories and copy necessary files
