@@ -15,7 +15,7 @@ WORKDIR /
 # Set up system
 RUN apt-get update --yes && \
     apt-get upgrade --yes && \
-    apt install --yes --no-install-recommends git wget curl bash libgl1 software-properties-common openssh-server nginx rsync ffmpeg && \
+    apt install --yes --no-install-recommends git wget curl bash libgl1 software-properties-common openssh-server nginx rsync ffmpeg git-lfs && \
     apt-get install --yes --no-install-recommends build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt install python3.10-dev python3.10-venv -y --no-install-recommends && \
@@ -81,13 +81,21 @@ RUN cd /ComfyUI/custom_nodes && \
     git clone https://github.com/smthemex/ComfyUI_EchoMimic.git && \
     cd ComfyUI_EchoMimic && \
     pip install -r requirements.txt
-Run cd /ComfyUI/models/echo_mimic && \
+RUN cd /ComfyUI/models && \
+    mkdir echo_mimic && \
+    cd echo_mimic && \
+    git-lfs install && \
     git clone https://huggingface.co/BadToBest/EchoMimic && \
     mv EchoMimic/*.pth ./ && \
     mv EchoMimic/sd-image-variations-diffusers/unet ./ && \
     mv EchoMimic/sd-vae-ft-mse ./vae && \
-    mv EchoMimic/audio_processor ./audio_processor
-
+    mv EchoMimic/audio_processor ./audio_processor && \
+    rm -r EchoMimic
+RUN cd /ComfyUI/ && \
+    mkdir pysssss-workflows && \
+    cp custom_nodes/ComfyUI_EchoMimic/example/*.json pysssss-workflows/ && \
+    cp custom_nodes/ComfyUI-LivePortraitKJ/examples/*.json pysssss-workflows/ && \
+    cp custom_nodes/ComfyUI-AdvancedLivePortrait/sample/workflows/*.json pysssss-workflows/
 
 
 # Create necessary directories and copy necessary files
