@@ -1,10 +1,10 @@
 variable "RELEASE" {
-    default = "1.0.3"
+    default = "1.0.1"
 }
 
 target "default" {
     dockerfile = "Dockerfile"
-    tags = ["wlsdml1114/engui_liveportrait:${RELEASE}"]
+    tags = ["wlsdml1114/engui_flux:${RELEASE}"]
     contexts = {
         scripts = "../../container-template"
         proxy = "../../container-template/proxy"
