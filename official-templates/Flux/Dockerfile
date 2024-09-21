@@ -15,7 +15,7 @@ WORKDIR /
 # Set up system
 RUN apt-get update --yes && \
     apt-get upgrade --yes && \
-    apt install --yes --no-install-recommends git wget curl bash libgl1 software-properties-common openssh-server nginx rsync ffmpeg && \
+    apt install --yes --no-install-recommends git wget curl bash libgl1 software-properties-common openssh-server nginx rsync ffmpeg git-lfs && \
     apt-get install --yes --no-install-recommends build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt install python3.10-dev python3.10-venv -y --no-install-recommends && \
@@ -38,7 +38,7 @@ ENV PATH="/venv/bin:$PATH"
 RUN pip install --upgrade --no-cache-dir pip && \
     pip install --upgrade setuptools && \
     pip install --upgrade wheel
-RUN pip install --upgrade --no-cache-dir torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121
+RUN pip install --upgrade --no-cache-dir torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 --index-url https://download.pytorch.org/whl/cu121
 RUN pip install --upgrade --no-cache-dir jupyterlab ipywidgets jupyter-archive jupyter_contrib_nbextensions triton xformers gdown
 
 # Set up Jupyter Notebook
@@ -49,53 +49,52 @@ RUN jupyter contrib nbextension install --user && \
 # Install ComfyUI and ComfyUI Manager
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd /ComfyUI && \
-    pip install --no-cache-dir -r requirements.txt && \
-    git clone https://github.com/ltdrdata/ComfyUI-Manager.git custom_nodes/ComfyUI-Manager && \
+    pip install -r requirements.txt && \
+    cd ..
+RUN git clone https://github.com/ltdrdata/ComfyUI-Manager.git custom_nodes/ComfyUI-Manager && \
     cd custom_nodes/ComfyUI-Manager && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
-    git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
+    git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/kijai/ComfyUI-LivePortraitKJ.git && \
     cd ComfyUI-LivePortraitKJ && \
-    pip install --no-cache-dir insightface && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
+    pip install insightface && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait.git && \
     cd ComfyUI-AdvancedLivePortrait && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git && \
     cd ComfyUI-VideoHelperSuite && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/cubiq/ComfyUI_essentials.git && \
     cd ComfyUI_essentials && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/kijai/ComfyUI-KJNodes.git && \
     cd ComfyUI-KJNodes && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../../ && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/ && \
     mkdir pysssss-workflows && \
     cp custom_nodes/ComfyUI-LivePortraitKJ/examples/*.json pysssss-workflows/ && \
     cp custom_nodes/ComfyUI-AdvancedLivePortrait/sample/workflows/*.json pysssss-workflows/
+RUN cd /ComfyUI && \
+    git clone https://huggingface.co/comfyanonymous/flux_text_encoders && \
+    mv flux_text_encoders/clip_l.safetensors models/clip/ && \
+    mv flux_text_encoders/t5xxl_fp16.safetensors models/clip/ && \
+    rm -r flux_text_encoders
 
-# Cuda toolkit
-RUN cd / && \
-    wget https://developer.download.nvidia.com/compute/cuda/12.1.1/local_installers/cuda_12.1.1_530.30.02_linux.run && \
-    sh cuda_12.1.1_530.30.02_linux.run --silent --toolkit && \
-    rm cuda_12.1.1_530.30.02_linux.run
 
 # Install LP
-RUN cd / && \
-    git clone https://github.com/KwaiVGI/LivePortrait.git && \
-    cd LivePortrait && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir -U "huggingface_hub[cli]" && \
-    huggingface-cli download KwaiVGI/LivePortrait --local-dir pretrained_weights --exclude "*.git*" "README.md" "docs"
-
-RUN pip uninstall -y fastapi && \
-    pip install --no-cache-dir fastapi==0.112.2
+# RUN cd / && \
+# git clone https://github.com/KwaiVGI/LivePortrait.git && \
+# cd LivePortrait && \
+# pip install -r requirements.txt && \
+# pip install -U "huggingface_hub[cli]" && \
+# huggingface-cli download KwaiVGI/LivePortrait --local-dir pretrained_weights --exclude "*.git*" "README.md" "docs"
 
 
 # Create necessary directories and copy necessary files
@@ -116,6 +115,7 @@ COPY README.md /usr/share/nginx/html/README.md
 # Start Scripts
 COPY pre_start.sh /pre_start.sh
 COPY --from=scripts start.sh /start.sh
+COPY flux_workflow.json /ComfyUI/pysssss-workflows/flux_workflow.json
 RUN chmod +x /start.sh
 
 CMD [ "/start.sh" ]

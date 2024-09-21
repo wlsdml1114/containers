@@ -50,8 +50,9 @@ RUN jupyter contrib nbextension install --user && \
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd /ComfyUI && \
     pip install -r requirements.txt
-RUN git clone https://github.com/ltdrdata/ComfyUI-Manager.git custom_nodes/ComfyUI-Manager && \
-    cd custom_nodes/ComfyUI-Manager && \
+RUN cd /ComfyUI/custom_nodes/ && \
+    git clone https://github.com/ltdrdata/ComfyUI-Manager.git && \
+    cd ComfyUI-Manager && \
     pip install -r requirements.txt
 RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git
@@ -80,6 +81,22 @@ RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/kijai/ComfyUI-MimicMotionWrapper.git && \
     cd ComfyUI-MimicMotionWrapper && \
     pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
+    git clone https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git && \
+    cd ComfyUI-Frame-Interpolation && \
+    pip install -r requirements-no-cupy.txt
+RUN cd /ComfyUI/custom_nodes/ && \
+    git clone https://github.com/FizzleDorf/ComfyUI_FizzNodes && \
+    cd ComfyUI_FizzNodes && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
+    git clone https://github.com/rgthree/rgthree-comfy && \
+    cd rgthree-comfy && \
+    pip install -r requirements.txt
+RUN cd /ComfyUI/custom_nodes/ && \
+    git clone https://github.com/Gourieff/comfyui-reactor-node && \
+    cd comfyui-reactor-node && \
+    pip install -r requirements.txt
 RUN cd /ComfyUI/models && \
     mkdir mimicmotion && \
     cd mimicmotion && \
@@ -93,7 +110,10 @@ RUN cd /ComfyUI/ && \
     cp custom_nodes/ComfyUI-MimicMotionWrapper/examples/*.json pysssss-workflows/ && \
     cp custom_nodes/ComfyUI-LivePortraitKJ/examples/*.json pysssss-workflows/ && \
     cp custom_nodes/ComfyUI-AdvancedLivePortrait/sample/workflows/*.json pysssss-workflows/
-
+RUN cd /ComfyUI/models/ && \
+    mkdir insightface && \
+    cd insightface && \
+    wget https://github.com/facefusion/facefusion-assets/releases/download/models/inswapper_128.onnx
 
 
 # Install LP
@@ -123,6 +143,7 @@ COPY README.md /usr/share/nginx/html/README.md
 # Start Scripts
 COPY pre_start.sh /pre_start.sh
 COPY --from=scripts start.sh /start.sh
+COPY VFI_Faceswap.json /ComfyUI/pysssss-workflows/VFI_Faceswap.json
 RUN chmod +x /start.sh
 
 CMD [ "/start.sh" ]
