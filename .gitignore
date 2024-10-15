@@ -1,3 +1,4 @@
 *.ckpt
 *.safetensors
 *.pth
+official-templates/drawingspinup/preprocessed.zip
