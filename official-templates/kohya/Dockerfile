@@ -17,7 +17,7 @@ WORKDIR /
 RUN apt-get update --yes && \
     apt-get upgrade --yes && \
     apt install --yes --no-install-recommends git wget curl bash libgl1 software-properties-common openssh-server nginx rsync ffmpeg && \
-    apt-get install --yes --no-install-recommends build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev && \
+    apt-get install --yes --no-install-recommends build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev python3-tk && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt install python3.10-dev python3.10-venv -y --no-install-recommends && \
     apt-get autoremove -y && \
@@ -34,6 +34,10 @@ RUN ln -s /usr/bin/python3.10 /usr/bin/python && \
 
 RUN python -m venv /venv
 ENV PATH="/venv/bin:$PATH"
+
+RUN curl -sSL https://github.com/kodxana/RunPod-FilleUploader/raw/main/scripts/installer.sh -o installer.sh && \
+    chmod +x installer.sh && \
+    ./installer.sh
 
 # Install necessary Python packages
 RUN pip install --upgrade --no-cache-dir pip && \
@@ -58,15 +62,6 @@ RUN cd /ComfyUI/custom_nodes/ && \
 RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git
 RUN cd /ComfyUI/custom_nodes/ && \
-    git clone https://github.com/kijai/ComfyUI-LivePortraitKJ.git && \
-    cd ComfyUI-LivePortraitKJ && \
-    pip install insightface && \
-    pip install -r requirements.txt
-RUN cd /ComfyUI/custom_nodes/ && \
-    git clone https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait.git && \
-    cd ComfyUI-AdvancedLivePortrait && \
-    pip install -r requirements.txt
-RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git && \
     cd ComfyUI-VideoHelperSuite && \
     pip install -r requirements.txt
@@ -79,14 +74,6 @@ RUN cd /ComfyUI/custom_nodes/ && \
     cd ComfyUI-KJNodes && \
     pip install -r requirements.txt
 RUN cd /ComfyUI/custom_nodes/ && \
-    git clone https://github.com/kijai/ComfyUI-MimicMotionWrapper.git && \
-    cd ComfyUI-MimicMotionWrapper && \
-    pip install -r requirements.txt
-RUN cd /ComfyUI/custom_nodes/ && \
-    git clone https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git && \
-    cd ComfyUI-Frame-Interpolation && \
-    pip install -r requirements-no-cupy.txt
-RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/FizzleDorf/ComfyUI_FizzNodes && \
     cd ComfyUI_FizzNodes && \
     pip install -r requirements.txt
@@ -94,32 +81,13 @@ RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/rgthree/rgthree-comfy && \
     cd rgthree-comfy && \
     pip install -r requirements.txt
-RUN cd /ComfyUI/custom_nodes/ && \
-    git clone https://github.com/Gourieff/comfyui-reactor-node && \
-    cd comfyui-reactor-node && \
-    pip install -r requirements.txt
-RUN cd /ComfyUI/models && \
-    mkdir mimicmotion && \
-    cd mimicmotion && \
-    wget https://huggingface.co/Kijai/MimicMotion_pruned/resolve/main/MimicMotionMergedUnet_1-0-fp16.safetensors -O MimicMotionMergedUnet_1-0-fp16.safetensors
-# RUN pip install -U "huggingface_hub[cli]" && \
-#     huggingface-cli login --token $HUGGINGFACE_TOKEN
-# RUN cd ../diffusers && \
-#     wget https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt-1-1/resolve/main/svd_xt_1_1.safetensors -O svd_xt_1_1.safetensors
-RUN cd /ComfyUI/ && \
-    mkdir pysssss-workflows && \
-    cp custom_nodes/ComfyUI-MimicMotionWrapper/examples/*.json pysssss-workflows/ && \
-    cp custom_nodes/ComfyUI-LivePortraitKJ/examples/*.json pysssss-workflows/ && \
-    cp custom_nodes/ComfyUI-AdvancedLivePortrait/sample/workflows/*.json pysssss-workflows/
-RUN cd /ComfyUI/models/ && \
-    mkdir insightface && \
-    cd insightface && \
-    wget https://github.com/facefusion/facefusion-assets/releases/download/models/inswapper_128.onnx
 
+# Install kohya
+RUN git clone --recursive https://github.com/bmaltais/kohya_ss.git 
+# RUN cd kohya_ss && \
+#     /kohya_ss/venv/bin/python -m pip install -r /kohya_ss/requirements.txt && \
+#     /kohya_ss/venv/bin/python -m pip install -r /kohya_ss/requirements_runpod.txt
 
-COPY animemixv2_v20.safetensors /ComfyUI/models/checkpoints/animemixv2_v20.safetensors
-COPY klF8Anime2VAE_klF8Anime2VAE.safetensors /ComfyUI/models/vae/klF8Anime2VAE_klF8Anime2VAE.safetensors
-COPY motionModel_v01.ckpt /ComfyUI/models/animatediff_models/motionModel_v01.ckpt
 # Install LP
 # RUN cd / && \
 # git clone https://github.com/KwaiVGI/LivePortrait.git && \
@@ -147,7 +115,13 @@ COPY README.md /usr/share/nginx/html/README.md
 # Start Scripts
 COPY pre_start.sh /pre_start.sh
 COPY --from=scripts start.sh /start.sh
-COPY VFI.json /ComfyUI/pysssss-workflows/VFI.json
+COPY post_start.sh /post_start.sh
+COPY easynegative.safetensors /ComfyUI/models/embeddings/easynegative.safetensors
+COPY FastNegativeV2.pt /ComfyUI/models/embeddings/FastNegativeV2.pt
+COPY ng_deepnegative_v1_75t.pt /ComfyUI/models/embeddings/ng_deepnegative_v1_75t.pt
+COPY kl-f8-anime2.ckpt /ComfyUI/models/vae/kl-f8-anime2.ckpt
+COPY animemixv2_v20.safetensors /ComfyUI/models/checkpoints/animemixv2_v20.safetensors
+COPY control_v11p_sd15_openpose_fp16.safetensors /ComfyUI/models/controlnet/control_v11p_sd15_openpose_fp16.safetensors
 RUN chmod +x /start.sh
 
 CMD [ "/start.sh" ]

@@ -1,9 +1,8 @@
 #!/bin/bash
 
 export PYTHONUNBUFFERED=1
-source /venv/bin/activate
 
-rsync -au --remove-source-files /LivePortrait/ /workspace/LivePortrait/
+# cd /FasterLivePortrait
+# sh scripts/all_onnx2trt.sh
 
-cd /workspace/LivePortrait/
-python app.py --server-name "0.0.0.0" --server-port 8890 &
+rsync -au --remove-source-files /FasterLivePortrait/ /workspace/FasterLivePortrait/

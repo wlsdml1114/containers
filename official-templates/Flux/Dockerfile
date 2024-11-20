@@ -1,7 +1,7 @@
 # Import necessary base images
 # FROM runpod/stable-diffusion:models-1.0.0 as sd-models
 # FROM runpod/stable-diffusion-models:2.1 as hf-cache
-FROM nvidia/cuda:12.1.0-base-ubuntu22.04 as runtime
+FROM nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04 as runtime
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -38,8 +38,8 @@ ENV PATH="/venv/bin:$PATH"
 RUN pip install --upgrade --no-cache-dir pip && \
     pip install --upgrade setuptools && \
     pip install --upgrade wheel
-RUN pip install --upgrade --no-cache-dir torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 --index-url https://download.pytorch.org/whl/cu121
-RUN pip install --upgrade --no-cache-dir jupyterlab ipywidgets jupyter-archive jupyter_contrib_nbextensions triton xformers gdown
+RUN pip install --upgrade --no-cache-dir torch torchvision torchaudio xformers --index-url https://download.pytorch.org/whl/cu124
+RUN pip install --upgrade --no-cache-dir jupyterlab ipywidgets jupyter-archive jupyter_contrib_nbextensions triton gdown
 
 # Set up Jupyter Notebook
 RUN pip install notebook==6.5.5
@@ -49,22 +49,13 @@ RUN jupyter contrib nbextension install --user && \
 # Install ComfyUI and ComfyUI Manager
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd /ComfyUI && \
-    pip install -r requirements.txt && \
-    cd ..
-RUN git clone https://github.com/ltdrdata/ComfyUI-Manager.git custom_nodes/ComfyUI-Manager && \
-    cd custom_nodes/ComfyUI-Manager && \
+    pip install -r requirements.txt 
+RUN cd /ComfyUI/custom_nodes/ && \
+    git clone https://github.com/ltdrdata/ComfyUI-Manager.git && \
+    cd ComfyUI-Manager && \
     pip install -r requirements.txt
 RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git
-RUN cd /ComfyUI/custom_nodes/ && \
-    git clone https://github.com/kijai/ComfyUI-LivePortraitKJ.git && \
-    cd ComfyUI-LivePortraitKJ && \
-    pip install insightface && \
-    pip install -r requirements.txt
-RUN cd /ComfyUI/custom_nodes/ && \
-    git clone https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait.git && \
-    cd ComfyUI-AdvancedLivePortrait && \
-    pip install -r requirements.txt
 RUN cd /ComfyUI/custom_nodes/ && \
     git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git && \
     cd ComfyUI-VideoHelperSuite && \
@@ -78,9 +69,7 @@ RUN cd /ComfyUI/custom_nodes/ && \
     cd ComfyUI-KJNodes && \
     pip install -r requirements.txt
 RUN cd /ComfyUI/ && \
-    mkdir pysssss-workflows && \
-    cp custom_nodes/ComfyUI-LivePortraitKJ/examples/*.json pysssss-workflows/ && \
-    cp custom_nodes/ComfyUI-AdvancedLivePortrait/sample/workflows/*.json pysssss-workflows/
+    mkdir pysssss-workflows 
 RUN cd /ComfyUI && \
     git clone https://huggingface.co/comfyanonymous/flux_text_encoders && \
     mv flux_text_encoders/clip_l.safetensors models/clip/ && \
@@ -104,6 +93,12 @@ RUN cd /ComfyUI && \
 # COPY --from=sd-models /SDv2-768.ckpt /comfy-models/SDv2-768.ckpt
 # RUN wget https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors -O /comfy-models/sd_xl_base_1.0.safetensors && \
 #     wget https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0/resolve/main/sd_xl_refiner_1.0.safetensors -O /comfy-models/sd_xl_refiner_1.0.safetensors
+
+COPY ae.safetensors /ComfyUI/models/vae/ae.safetensors
+COPY flux_dev.safetensors /ComfyUI/models/unet/flux_dev.safetensors
+COPY Mysterious.safetensors /ComfyUI/models/unet/Mysterious.safetensors
+COPY diffusion_pytorch_model.safetensors /ComfyUI/models/controlnet/diffusion_pytorch_model.safetensors
+COPY hand.safetensors /ComfyUI/models/loras/hand.safetensors
 
 # NGINX Proxy
 COPY --from=proxy nginx.conf /etc/nginx/nginx.conf

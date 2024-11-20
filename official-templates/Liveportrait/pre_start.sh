@@ -2,19 +2,17 @@
 
 export PYTHONUNBUFFERED=1
 source /venv/bin/activate
-rsync -au --remove-source-files /ComfyUI/ /workspace/ComfyUI/
-ln -s /comfy-models/* /workspace/ComfyUI/models/checkpoints/
 
 cd /LivePortrait/src/utils/dependencies/XPose/models/UniPose/ops
 python setup.py build install
 
 rsync -au --remove-source-files /LivePortrait/ /workspace/LivePortrait/
 
-cd /workspace/ComfyUI
-python main.py --listen --port 3000 &
+cd /workspace/LivePortrait/
+python app.py --server-name "0.0.0.0" --server-port 8890 > /workspace/LP_output.log 2>&1 &
 
 cd /workspace/LivePortrait/
-python app.py --server-name "0.0.0.0" --server-port 8890 &
+python app_animals.py --server-name "0.0.0.0" --server-port 8892 > /workspace/LP_animal_output.log 2>&1 &
 
 cd /workspace/LivePortrait/
-python app_animals.py --server-name "0.0.0.0" --server-port 8892 &
+python engui_app.py > /workspace/engui_output.log 2>&1 &

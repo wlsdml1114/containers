@@ -2,3 +2,4 @@
 *.safetensors
 *.pth
 official-templates/drawingspinup/preprocessed.zip
+official-templates/faster_Liveportrait/checkpoints.zip

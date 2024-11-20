@@ -1,7 +1,9 @@
 # Import necessary base images
 # FROM runpod/stable-diffusion:models-1.0.0 as sd-models
 # FROM runpod/stable-diffusion-models:2.1 as hf-cache
-FROM nvidia/cuda:12.1.0-base-ubuntu22.04 as runtime
+# FROM nvidia/cuda:12.1.0-base-ubuntu22.04 as runtime
+# FROM nvidia/cuda:12.1.0-cudnn8-devel-ubuntu22.04 as runtime
+FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04 as runtime
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -31,6 +33,10 @@ RUN ln -s /usr/bin/python3.10 /usr/bin/python && \
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python get-pip.py
 
+RUN curl -sSL https://github.com/kodxana/RunPod-FilleUploader/raw/main/scripts/installer.sh -o installer.sh && \
+    chmod +x installer.sh && \
+    ./installer.sh
+
 RUN python -m venv /venv
 ENV PATH="/venv/bin:$PATH"
 
@@ -38,53 +44,13 @@ ENV PATH="/venv/bin:$PATH"
 RUN pip install --upgrade --no-cache-dir pip && \
     pip install --upgrade setuptools && \
     pip install --upgrade wheel
-RUN pip install --upgrade --no-cache-dir torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121
-RUN pip install --upgrade --no-cache-dir jupyterlab ipywidgets jupyter-archive jupyter_contrib_nbextensions triton xformers gdown
+RUN pip install --upgrade --no-cache-dir torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 xformers --index-url https://download.pytorch.org/whl/cu118
+RUN pip install --upgrade --no-cache-dir jupyterlab ipywidgets jupyter-archive jupyter_contrib_nbextensions triton gdown gradio
 
 # Set up Jupyter Notebook
 RUN pip install notebook==6.5.5
 RUN jupyter contrib nbextension install --user && \
     jupyter nbextension enable --py widgetsnbextension
-
-# Install ComfyUI and ComfyUI Manager
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
-    cd /ComfyUI && \
-    pip install --no-cache-dir -r requirements.txt && \
-    git clone https://github.com/ltdrdata/ComfyUI-Manager.git custom_nodes/ComfyUI-Manager && \
-    cd custom_nodes/ComfyUI-Manager && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
-    git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git && \
-    git clone https://github.com/kijai/ComfyUI-LivePortraitKJ.git && \
-    cd ComfyUI-LivePortraitKJ && \
-    pip install --no-cache-dir insightface && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
-    git clone https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait.git && \
-    cd ComfyUI-AdvancedLivePortrait && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
-    git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git && \
-    cd ComfyUI-VideoHelperSuite && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
-    git clone https://github.com/cubiq/ComfyUI_essentials.git && \
-    cd ComfyUI_essentials && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../ && \
-    git clone https://github.com/kijai/ComfyUI-KJNodes.git && \
-    cd ComfyUI-KJNodes && \
-    pip install --no-cache-dir -r requirements.txt && \
-    cd ../../ && \
-    mkdir pysssss-workflows && \
-    cp custom_nodes/ComfyUI-LivePortraitKJ/examples/*.json pysssss-workflows/ && \
-    cp custom_nodes/ComfyUI-AdvancedLivePortrait/sample/workflows/*.json pysssss-workflows/
-
-# Cuda toolkit
-RUN cd / && \
-    wget https://developer.download.nvidia.com/compute/cuda/12.1.1/local_installers/cuda_12.1.1_530.30.02_linux.run && \
-    sh cuda_12.1.1_530.30.02_linux.run --silent --toolkit && \
-    rm cuda_12.1.1_530.30.02_linux.run
 
 # Install LP
 RUN cd / && \
@@ -94,9 +60,9 @@ RUN cd / && \
     pip install --no-cache-dir -U "huggingface_hub[cli]" && \
     huggingface-cli download KwaiVGI/LivePortrait --local-dir pretrained_weights --exclude "*.git*" "README.md" "docs"
 
-RUN pip uninstall -y fastapi && \
-    pip install --no-cache-dir fastapi==0.112.2
-
+COPY engui_app.py /LivePortrait/engui_app.py
+# COPY motion_template.py /LivePortrait/motion_template.py
+# COPY live_portrait_pipeline.py /LivePortrait/src/live_portrait_pipeline.py
 
 # Create necessary directories and copy necessary files
 # RUN set -e && mkdir -p /root/.cache/huggingface && mkdir /comfy-models
@@ -115,6 +81,7 @@ COPY README.md /usr/share/nginx/html/README.md
 
 # Start Scripts
 COPY pre_start.sh /pre_start.sh
+COPY post_start.sh /post_start.sh
 COPY --from=scripts start.sh /start.sh
 RUN chmod +x /start.sh
 

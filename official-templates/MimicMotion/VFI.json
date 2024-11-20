@@ -1,20 +1,20 @@
 {
   "last_node_id": 27,
-  "last_link_id": 33,
+  "last_link_id": 34,
   "nodes": [
     {
       "id": 17,
       "type": "Display Any (rgthree)",
-      "pos": [
-        680,
-        450
-      ],
+      "pos": {
+        "0": 680,
+        "1": 450
+      },
       "size": {
         "0": 210,
         "1": 76
       },
       "flags": {},
-      "order": 3,
+      "order": 2,
       "mode": 0,
       "inputs": [
         {
@@ -24,20 +24,21 @@
           "dir": 3
         }
       ],
+      "outputs": [],
       "properties": {
         "Node name for S&R": "Display Any (rgthree)"
       },
       "widgets_values": [
-        "[1, 0]"
+        ""
       ]
     },
     {
       "id": 16,
       "type": "BatchValueSchedule",
-      "pos": [
-        660,
-        230
-      ],
+      "pos": {
+        "0": 660,
+        "1": 230
+      },
       "size": {
         "0": 400,
         "1": 200
@@ -45,6 +46,7 @@
       "flags": {},
       "order": 0,
       "mode": 0,
+      "inputs": [],
       "outputs": [
         {
           "name": "FLOAT",
@@ -75,16 +77,16 @@
     {
       "id": 3,
       "type": "RIFE VFI",
-      "pos": [
-        640,
-        -10
-      ],
+      "pos": {
+        "0": 640,
+        "1": -10
+      },
       "size": {
         "0": 443.4000244140625,
         "1": 198
       },
       "flags": {},
-      "order": 4,
+      "order": 3,
       "mode": 0,
       "inputs": [
         {
@@ -95,7 +97,8 @@
         {
           "name": "optional_interpolation_states",
           "type": "INTERPOLATION_STATES",
-          "link": null
+          "link": null,
+          "shape": 7
         },
         {
           "name": "multiplier",
@@ -111,8 +114,7 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            18,
-            30
+            18
           ],
           "slot_index": 0,
           "shape": 3
@@ -131,138 +133,31 @@
       ]
     },
     {
-      "id": 25,
-      "type": "VHS_VideoCombine",
-      "pos": [
-        2090,
-        -30
-      ],
-      "size": [
-        410,
-        1017.3333333333334
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 27
-        },
-        {
-          "name": "audio",
-          "type": "VHS_AUDIO",
-          "link": null
-        },
-        {
-          "name": "meta_batch",
-          "type": "VHS_BatchManager",
-          "link": null
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "Filenames",
-          "type": "VHS_FILENAMES",
-          "links": null,
-          "shape": 3
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VHS_VideoCombine"
+      "id": 19,
+      "type": "VHS_LoadVideo",
+      "pos": {
+        "0": 170,
+        "1": -20
       },
-      "widgets_values": {
-        "frame_rate": 30,
-        "loop_count": 0,
-        "filename_prefix": "AnimateDiff",
-        "format": "video/h264-mp4",
-        "pix_fmt": "yuv420p",
-        "crf": 19,
-        "save_metadata": true,
-        "pingpong": false,
-        "save_output": true,
-        "videopreview": {
-          "hidden": false,
-          "paused": false,
-          "params": {
-            "filename": "AnimateDiff_00019.mp4",
-            "subfolder": "",
-            "type": "output",
-            "format": "video/h264-mp4",
-            "frame_rate": 30
-          }
-        }
-      }
-    },
-    {
-      "id": 24,
-      "type": "LoadImage",
-      "pos": [
-        1687,
-        383
-      ],
       "size": [
-        343.4859100267729,
-        456.7502238147358
+        445.3971862792969,
+        984.9953104654949
       ],
       "flags": {},
       "order": 1,
       "mode": 0,
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            31
-          ],
-          "slot_index": 0,
-          "shape": 3
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null,
-          "shape": 3
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadImage"
-      },
-      "widgets_values": [
-        "ComfyUI_00025_.png",
-        "image"
-      ]
-    },
-    {
-      "id": 19,
-      "type": "VHS_LoadVideo",
-      "pos": [
-        170,
-        -20
-      ],
-      "size": [
-        445.3971862792969,
-        1032.2616644965278
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
       "inputs": [
         {
           "name": "meta_batch",
           "type": "VHS_BatchManager",
-          "link": null
+          "link": null,
+          "shape": 7
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": null
+          "link": null,
+          "shape": 7
         }
       ],
       "outputs": [
@@ -297,23 +192,23 @@
         "Node name for S&R": "VHS_LoadVideo"
       },
       "widgets_values": {
-        "video": "MimicMotion_00002 (1).mp4",
+        "video": "MimicMotion_00002.mp4",
         "force_rate": 0,
         "force_size": "Disabled",
         "custom_width": 512,
         "custom_height": 512,
-        "frame_load_cap": 10,
-        "skip_first_frames": 30,
+        "frame_load_cap": 0,
+        "skip_first_frames": 0,
         "select_every_nth": 1,
         "choose video to upload": "image",
         "videopreview": {
           "hidden": false,
           "paused": false,
           "params": {
-            "frame_load_cap": 10,
-            "skip_first_frames": 30,
+            "frame_load_cap": 0,
+            "skip_first_frames": 0,
             "force_rate": 0,
-            "filename": "MimicMotion_00002 (1).mp4",
+            "filename": "MimicMotion_00002.mp4",
             "type": "input",
             "format": "video/mp4",
             "select_every_nth": 1
@@ -325,16 +220,16 @@
     {
       "id": 15,
       "type": "VHS_VideoCombine",
-      "pos": [
-        1130,
-        -10
-      ],
+      "pos": {
+        "0": 1130,
+        "1": -10
+      },
       "size": [
         410,
-        1017.3333333333334
+        974
       ],
       "flags": {},
-      "order": 5,
+      "order": 4,
       "mode": 0,
       "inputs": [
         {
@@ -344,18 +239,21 @@
         },
         {
           "name": "audio",
-          "type": "VHS_AUDIO",
-          "link": null
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
         },
         {
           "name": "meta_batch",
           "type": "VHS_BatchManager",
-          "link": null
+          "link": null,
+          "shape": 7
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": null
+          "link": null,
+          "shape": 7
         }
       ],
       "outputs": [
@@ -370,7 +268,7 @@
         "Node name for S&R": "VHS_VideoCombine"
       },
       "widgets_values": {
-        "frame_rate": 30,
+        "frame_rate": 24,
         "loop_count": 0,
         "filename_prefix": "AnimateDiff",
         "format": "video/h264-mp4",
@@ -383,84 +281,14 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "AnimateDiff_00016.mp4",
+            "filename": "AnimateDiff_00001.mp4",
             "subfolder": "",
             "type": "output",
             "format": "video/h264-mp4",
-            "frame_rate": 30
+            "frame_rate": 24
           }
         }
       }
-    },
-    {
-      "id": 21,
-      "type": "ReActorFaceSwap",
-      "pos": [
-        1702,
-        -22
-      ],
-      "size": {
-        "0": 315,
-        "1": 358
-      },
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "input_image",
-          "type": "IMAGE",
-          "link": 30
-        },
-        {
-          "name": "source_image",
-          "type": "IMAGE",
-          "link": 31
-        },
-        {
-          "name": "face_model",
-          "type": "FACE_MODEL",
-          "link": null
-        },
-        {
-          "name": "face_boost",
-          "type": "FACE_BOOST",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            27
-          ],
-          "slot_index": 0,
-          "shape": 3
-        },
-        {
-          "name": "FACE_MODEL",
-          "type": "FACE_MODEL",
-          "links": null,
-          "shape": 3
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ReActorFaceSwap"
-      },
-      "widgets_values": [
-        true,
-        "inswapper_128.onnx",
-        "retinaface_resnet50",
-        "GPEN-BFR-512.onnx",
-        0.5,
-        1,
-        "no",
-        "no",
-        "0",
-        "0",
-        1
-      ]
     }
   ],
   "links": [
@@ -495,30 +323,6 @@
       3,
       0,
       "IMAGE"
-    ],
-    [
-      27,
-      21,
-      0,
-      25,
-      0,
-      "IMAGE"
-    ],
-    [
-      30,
-      3,
-      0,
-      21,
-      0,
-      "IMAGE"
-    ],
-    [
-      31,
-      24,
-      0,
-      21,
-      1,
-      "IMAGE"
     ]
   ],
   "groups": [
@@ -532,28 +336,16 @@
       ],
       "color": "#3f789e",
       "font_size": 24,
-      "locked": false
-    },
-    {
-      "title": "FaceSwapper",
-      "bounding": [
-        1590,
-        -160,
-        1142,
-        1201
-      ],
-      "color": "#8A8",
-      "font_size": 24,
-      "locked": false
+      "flags": {}
     }
   ],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6727499949325643,
+      "scale": 0.7400249944258211,
       "offset": [
-        -63.38301080775285,
-        248.3379436517587
+        57.0041144606359,
+        760.5568807397592
       ]
     }
   },

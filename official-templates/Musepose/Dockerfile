@@ -34,6 +34,9 @@ RUN apt-get update --yes && \
 #     apt-get clean && \
 #     rm -rf /var/lib/apt/lists/* && \
 #     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
+RUN curl -sSL https://github.com/kodxana/RunPod-FilleUploader/raw/main/scripts/installer.sh -o installer.sh && \
+    chmod +x installer.sh && \
+    ./installer.sh
 
 # Set up Python and pip
 RUN ln -s /usr/bin/python3.10 /usr/bin/python && \
@@ -167,10 +170,14 @@ COPY README.md /usr/share/nginx/html/README.md
 
 # Start Scripts
 COPY pre_start.sh /pre_start.sh
+COPY post_start.sh /post_start.sh
 COPY --from=scripts start.sh /start.sh
-COPY VFI_Faceswap.json /ComfyUI/pysssss-workflows/VFI_Faceswap.json
-COPY musepose-workflow-demo.json /ComfyUI/pysssss-workflows/musepose-workflow-demo.json
+# COPY VFI_Faceswap.json /ComfyUI/pysssss-workflows/VFI_Faceswap.json
+# COPY musepose-workflow-demo.json /ComfyUI/pysssss-workflows/musepose-workflow-demo.json
 COPY __init__.py /venv/lib/python3.10/site-packages/mmdet/__init__.py
+COPY easynegative.safetensors /ComfyUI/models/embeddings/easynegative.safetensors
+COPY FastNegativeV2.pt /ComfyUI/models/embeddings/FastNegativeV2.pt
+COPY ng_deepnegative_v1_75t.pt /ComfyUI/models/embeddings/ng_deepnegative_v1_75t.pt
 COPY animemixv2_v20.safetensors /ComfyUI/models/checkpoints/animemixv2_v20.safetensors
 COPY klF8Anime2VAE_klF8Anime2VAE.safetensors /ComfyUI/models/vae/klF8Anime2VAE_klF8Anime2VAE.safetensors
 COPY motionModel_v01.ckpt /ComfyUI/models/animatediff_models/motionModel_v01.ckpt

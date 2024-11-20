@@ -1,9 +1,9 @@
 variable "RELEASE" {
-    default = "1.0.0"
+    default = "1.1.5"
 }
 
 target "default" {
-    dockerfile = "Dockerfile"
+    dockerfile = "Dockerfile2"
     tags = ["wlsdml1114/engui_faster_liveportrait:${RELEASE}"]
     contexts = {
         scripts = "../../container-template"
